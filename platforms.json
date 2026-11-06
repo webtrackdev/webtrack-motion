@@ -1,0 +1,16 @@
+{
+  "webtrack": {
+    "name": "Webtrack",
+    "source": {
+      "type": "repo",
+      "repo": "../reactive",
+      "src": "src"
+    }
+  },
+  "futbol": {
+    "name": "Fútbol",
+    "source": {
+      "type": "theme"
+    }
+  }
+}

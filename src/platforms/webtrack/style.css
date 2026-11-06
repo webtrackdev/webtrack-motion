@@ -1,0 +1,7 @@
+/* Tokens, tema y patrones reales de reactive (solo lectura). */
+@import '../../../../reactive/src/assets/css/tailwind.css';
+@import '../../core/base.css';
+
+/* Tailwind escanea la plataforma y el nucleo. */
+@source './';
+@source '../../core';

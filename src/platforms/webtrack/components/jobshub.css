@@ -1,0 +1,197 @@
+/* Piezas de la pantalla Jobs (hub) para los videos jobs-calendario y jobs-novedades.
+   Todo es copia de reactive en solo lectura:
+   - Tokens de nivel del Calendario (WD-4442): src/assets/css/tailwind.css del PR #1754. El
+     checkout local de reactive aun no los trae, asi que se declaran aqui junto con las
+     utilidades que el PR usa (bg-level-*-tint, text-level-*-text, ...).
+   - Stat card `webtrack` (IndicatorsCard): assets/scss/style.css lineas 2278-2415.
+   - Toolbar de listados: assets/scss/style.css 1675-1715 y Toolbar.css (piel solida). */
+:root {
+  --accent-orange: #ff7a00;
+  --accent-yellow: #f5c400;
+  --level-blue-tint: color-mix(in srgb, var(--info) 14%, #ffffff);
+  --level-blue-border: color-mix(in srgb, var(--info) 32%, #ffffff);
+  --level-blue-text: color-mix(in srgb, var(--info) 72%, #000000);
+  --level-green-tint: color-mix(in srgb, var(--success) 14%, #ffffff);
+  --level-green-border: color-mix(in srgb, var(--success) 32%, #ffffff);
+  --level-green-text: color-mix(in srgb, var(--success) 76%, #000000);
+  --level-yellow-tint: color-mix(in srgb, var(--accent-yellow) 24%, #ffffff);
+  --level-yellow-border: color-mix(in srgb, var(--accent-yellow) 55%, #ffffff);
+  --level-yellow-text: color-mix(in srgb, var(--accent-yellow) 52%, #000000);
+  --level-orange-tint: color-mix(in srgb, var(--accent-orange) 16%, #ffffff);
+  --level-orange-border: color-mix(in srgb, var(--accent-orange) 37%, #ffffff);
+  --level-orange-text: color-mix(in srgb, var(--accent-orange) 66%, #000000);
+  --level-red-tint: color-mix(in srgb, var(--destructive) 13%, #ffffff);
+  --level-red-border: color-mix(in srgb, var(--destructive) 30%, #ffffff);
+  --level-red-text: color-mix(in srgb, var(--destructive) 72%, #000000);
+}
+.bg-accent-orange { background-color: var(--accent-orange); }
+.bg-accent-yellow { background-color: var(--accent-yellow); }
+.bg-level-blue-tint { background-color: var(--level-blue-tint); }
+.bg-level-blue-border { background-color: var(--level-blue-border); }
+.text-level-blue-text { color: var(--level-blue-text); }
+.border-level-blue-border { border-color: var(--level-blue-border); }
+.bg-level-green-tint { background-color: var(--level-green-tint); }
+.bg-level-green-border { background-color: var(--level-green-border); }
+.text-level-green-text { color: var(--level-green-text); }
+.border-level-green-border { border-color: var(--level-green-border); }
+.bg-level-yellow-tint { background-color: var(--level-yellow-tint); }
+.bg-level-yellow-border { background-color: var(--level-yellow-border); }
+.text-level-yellow-text { color: var(--level-yellow-text); }
+.border-level-yellow-border { border-color: var(--level-yellow-border); }
+.bg-level-orange-tint { background-color: var(--level-orange-tint); }
+.bg-level-orange-border { background-color: var(--level-orange-border); }
+.text-level-orange-text { color: var(--level-orange-text); }
+.border-level-orange-border { border-color: var(--level-orange-border); }
+.bg-level-red-tint { background-color: var(--level-red-tint); }
+.bg-level-red-border { background-color: var(--level-red-border); }
+.text-level-red-text { color: var(--level-red-text); }
+.border-level-red-border { border-color: var(--level-red-border); }
+
+/* Toolbar de listados (assets/scss/style.css) */
+.btn-icon { border-radius: var(--radius-nav); margin-top: unset; height: unset; min-width: unset; }
+.btn-toolbar .btn-filter-toolbar { width: auto; display: flex; align-items: center; gap: var(--app-toolbar-gap); }
+.btn-toolbar .group-btn-toolbar { display: flex; flex: 1; width: 88%; flex-wrap: nowrap; justify-content: end; align-items: center; gap: var(--app-toolbar-gap); min-width: 0; }
+.btn-toolbar button:disabled { pointer-events: auto; cursor: not-allowed; }
+.multiselect-toolbar .multiselect-count { font-size: 0.85rem; font-weight: 500; color: #040eff; white-space: nowrap; }
+/* Piel por defecto del tema: botones del toolbar en relleno solido (Toolbar.css) */
+.btn-toolbar button[data-variant^='soft-'] { border-color: transparent; }
+.btn-toolbar button[data-variant='soft-primary'] { background-color: var(--primary); color: var(--primary-foreground); }
+.btn-toolbar button[data-variant='soft-secondary'] { background-color: var(--secondary); color: var(--secondary-foreground); }
+.btn-toolbar button[data-variant='soft-info'] { background-color: var(--info); color: var(--info-foreground); }
+
+/* Panel `webtrack` — card de indicadores y tarjetas de sección del proyecto.
+   El Card de shadcn ya no emite .card / .card-header / .card-body, así que los
+   selectores apuntan a sus data-slot. La superficie (fondo, borde, radio) NO va
+   aquí sino en src/components/ui/card.tsx: debe emitirse como utilidad antes
+   del className del consumidor para que los usos que la sobreescriben
+   (bg-white, bg-transparent, border-primary, shadow-none) sigan ganando. */
+/* Rediseño 2026 — stat card del artifact: label a la IZQUIERDA en 11.5px/800 con
+   tracking amplio y tono muted, y el cuadro de icono a la derecha (lo monta
+   IndicatorsCard con IconTile). */
+/* Las vars --stat-card-* son ganchos de runtime del preset de tamaños del
+   ThemeCustomizer; el fallback es el valor canónico del stylesheet. */
+.webtrack [data-slot='card-header'] {
+  padding: var(--stat-card-header-pad, 0.875rem 1rem 0.25rem);
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  font-style: normal;
+  /* Lee la escala --text-stat-label del @theme (perilla del ThemeCustomizer).
+     Con fallback explícito (WD-2665): `@theme` hace tree-shaking de las
+     variables que ninguna utilidad referencia, así que una var sin fallback se
+     queda en una declaración inválida —y en font-weight eso son 400, no el 800
+     del catálogo—. El fallback es copia literal del valor canónico. */
+  font-weight: var(--text-stat-label--font-weight, 800);
+  font-size: var(--text-stat-label, 11.5px);
+  line-height: var(--text-stat-label--line-height, 1.35);
+  letter-spacing: var(--text-stat-label--letter-spacing, 0.8px);
+  text-transform: uppercase;
+  text-align: left;
+  color: var(--muted-foreground);
+}
+/* El título puede ser largo: se le deja envolver en dos líneas antes de recortar,
+   en vez de fijar un max-height que lo cortaba a mitad de letra. */
+.webtrack [data-slot='card-title'] {
+  /* WD-2665: el peso y el interlineado los pone el header de arriba, que lee
+     `--text-stat-label--*`. `CardTitle` trae `leading-none font-semibold` y esas
+     utilidades le ganaban a la herencia, así que de la etiqueta de métrica solo
+     respondía el tamaño (que sí se hereda, porque no lo declara). Esta regla va
+     sin capa, o sea que gana a las utilidades. */
+  font-weight: inherit;
+  line-height: inherit;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.webtrack [data-slot='card-description'] {
+  text-align: left;
+  font-style: normal;
+  font-weight: 400;
+}
+/* Variante para BarChartCard con título de paginación (chevrons + texto): el
+   header de la stat card alinea con justify-content:space-between, que con un
+   solo hijo (sin CardAction) lo deja pegado a la izquierda en vez de centrarlo. */
+.webtrack.header-centered [data-slot='card-header'] {
+  justify-content: center;
+}
+/* Con el header centrado, el título y el subtítulo (p. ej. "Total: N") también van
+   centrados: por defecto ambos llevan text-align:left en la stat card. */
+.webtrack.header-centered [data-slot='card-title'],
+.webtrack.header-centered [data-slot='card-description'] {
+  text-align: center;
+}
+/* El cuerpo lleva el número pegado al header y la lista de detalle separada por
+   un divisor, como en el artifact. */
+.webtrack [data-slot='card-content'] {
+  padding: var(--stat-card-content-pad, 0 1rem 0.875rem);
+  font-style: normal;
+  font-weight: 500;
+  text-align: left;
+}
+/* Divisor entre el número y la lista de detalle: se dibuja en el primer <p> de
+   detalle en vez de en el borde del contenedor, que dejaba una línea suelta en
+   las tarjetas sin detalle. */
+.webtrack [data-slot='card-content'] > .big-number ~ p:not(.sub-indicator),
+.webtrack [data-slot='card-content'] > div:has(.big-number) ~ p:not(.sub-indicator) {
+  font-size: var(--stat-card-detail-size, 12px);
+  font-weight: 600;
+  color: var(--muted-foreground);
+}
+.webtrack [data-slot='card-content'] > div:has(.big-number) + p,
+.webtrack [data-slot='card-content'] > div:has(.big-number) + div {
+  margin-top: var(--stat-card-divider-gap, 0.5rem);
+  padding-top: var(--stat-card-divider-gap, 0.5rem);
+  border-top: 1px solid var(--border-subtle);
+}
+.webtrack [data-slot='card-content'] p {
+  margin-bottom: 0rem;
+}
+.webtrack [data-slot='card-content'] p + p {
+  margin-top: var(--stat-card-detail-gap, 1px);
+}
+/* El número de la stat card: lee la escala --text-stat-value del @theme (así
+   la perilla de tipografía del ThemeCustomizer sí le llega). */
+.webtrack .big-number {
+  text-align: left;
+  font-style: normal;
+  font-weight: var(--text-stat-value--font-weight);
+  font-size: var(--text-stat-value);
+  line-height: var(--text-stat-value--line-height);
+  letter-spacing: var(--text-stat-value--letter-spacing);
+  color: var(--foreground);
+}
+.webtrack .sub-indicator {
+  text-align: left;
+  font-style: normal;
+  font-weight: 400;
+  font-size: 1.4rem;
+  line-height: 1.3;
+  color: var(--muted-foreground);
+}
+.webtrack .big-icon-container {
+  position: relative;
+  text-align: center;
+  height: 125px;
+}
+.webtrack .big-icon-vertical {
+  margin: 0;
+  position: absolute;
+  top: 55%;
+  left: 50%;
+  transform: translate(-50%, -45%);
+}
+.webtrack .scrollable {
+  overflow-y: auto;
+  overflow-x: hidden;
+  max-height: 420px;
+  margin-bottom: 10%;
+}
+.webtrack .scrollable::-webkit-scrollbar {
+  width: var(--scrollbar-size);
+}
+.webtrack [data-slot='card-content'].indicator {
+  padding-bottom: 0px;
+}

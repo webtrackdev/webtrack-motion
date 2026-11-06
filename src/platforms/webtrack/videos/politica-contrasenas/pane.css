@@ -1,0 +1,49 @@
+/* Panel lateral real de reactive: vendor/sliding-pane.css + las reglas de
+   .custom-sliding-pane y .custom-sliding-pane-form de assets/scss/style.css (copiadas aqui
+   porque ese archivo trae todo el CSS legacy). Solo lectura del repo. */
+
+.pp-pane .slide-pane__content {
+  position: relative;
+  overflow: hidden;
+  padding: 24px 32px;
+  flex: 1 1 auto;
+  margin-bottom: 60px;
+}
+.pp-pane .slide-pane__header {
+  background: #fff;
+  height: auto;
+  flex: 0 0 auto;
+  min-height: 64px;
+}
+.pp-pane .slide-pane__header .slide-pane__title-wrapper {
+  align-items: stretch;
+}
+.pp-pane .slide-pane__header .slide-pane__close {
+  position: absolute;
+  margin-left: 0px;
+}
+.pp-pane .slide-pane__header .slide-pane__title {
+  font-family: var(--app-font-sans);
+  font-style: normal;
+  font-weight: 600;
+  font-size: 25px;
+  line-height: 30px;
+  white-space: unset;
+  text-align: center;
+}
+.pp-pane .slide-pane__header .slide-pane__subtitle {
+  font-family: var(--app-font-sans);
+  font-style: normal;
+  font-weight: 600;
+  font-size: 12px;
+  line-height: 15px;
+  text-align: center;
+}
+
+/* En el video no hay viewport: el panel, su fondo y la barra de acciones se posicionan
+   dentro de la ventana (en reactive son fixed) para que las anclas se midan bien. */
+.pp-pane.slide-pane,
+.pp-pane .form-actions--footer,
+.pp-overlay.slide-pane__overlay {
+  position: absolute;
+}

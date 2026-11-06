@@ -1,0 +1,9 @@
+html, body { background: transparent; }
+
+/* Remotion pinta frame por frame: las animaciones y transiciones CSS de la app no van
+   sincronizadas con la linea de tiempo y dejan estados a medias. Todo el movimiento sale
+   de la composicion. */
+*, *::before, *::after {
+  animation: none !important;
+  transition: none !important;
+}

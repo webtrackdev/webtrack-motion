@@ -1,0 +1,6 @@
+/* Fútbol: sin CSS importado. Si hay repo, importa aqui su hoja principal. */
+@import 'tailwindcss';
+@import '../../core/base.css';
+
+@source './';
+@source '../../core';
