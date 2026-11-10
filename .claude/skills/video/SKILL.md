@@ -35,6 +35,21 @@ Todo el detalle, con tiempos y valores, en [calidad-diseno.md](references/calida
 - Sin commits hasta que el usuario lo pida.
 - Renders **uno por uno**, nunca dos composiciones a la vez.
 
+## Qué videos toca crear en una versión (Versio)
+
+`node scripts/versio.mjs plan [version]` lee las novedades de la versión desde Versio y genera
+`out/versio/<app>/<version>/plan.md` con prioridad, formato (video o GIF), slug, posibles
+duplicados (videos que ya existen) y el comando `new-video.mjs` de cada una. Es solo el plan:
+los videos se crean cuando el usuario lo pida, uno por uno. Los borradores se leen solos
+(reintento con `include=drafts`, clave con `can_read_drafts`); `--hidden` suma las novedades
+ocultas como "omitir". Un borrador puede cambiar hasta publicarse.
+
+Los videos que pide Versio ("Generar con Claude") los hace `scripts/worker.mjs` como **videos
+temporales**: `new-video.mjs ... --job` los crea en `src/platforms/<id>/jobs/<slug>/` (ignorado por
+git, con su `index.tsx` y sin registrarse en `Root.tsx`); el worker renderiza, sube y borra la
+carpeta. Dentro de `jobs/`, las piezas de otros videos se importan con `../../videos/<video>/…`.
+Tailwind escanea `jobs/` porque el `style.css` de la plataforma lo registra con `@source`.
+
 ## Flujo rápido (un PR o una tarea)
 
 1. **Entiende el cambio.** `scripts/pr.sh info <N> [repo]` y `diff`; los textos nuevos con

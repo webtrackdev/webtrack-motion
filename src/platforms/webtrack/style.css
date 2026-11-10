@@ -5,3 +5,5 @@
 /* Tailwind escanea la plataforma y el nucleo. */
 @source './';
 @source '../../core';
+/* Videos temporales del worker de Versio: jobs/ está en .gitignore y Tailwind lo saltaría. */
+@source './jobs';

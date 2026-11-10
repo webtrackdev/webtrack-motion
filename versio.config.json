@@ -1,0 +1,13 @@
+{
+  "baseUrl": "https://uqpmjbcqwbemoalgtnry.supabase.co/functions/v1",
+  "app": "reactive",
+  "platform": "webtrack",
+  "rules": {
+    "highlight": { "formato": "video", "prioridad": "alta" },
+    "feature": { "formato": "video", "prioridad": "media", "badge": "NUEVO" },
+    "fix": { "formato": "gif", "prioridad": "baja", "badge": "CORRECCIÓN" },
+    "internal": { "formato": "omitir" },
+    "sinTipo": { "formato": "revisar", "prioridad": "media", "badge": "MEJORA" }
+  },
+  "similitudMinima": 0.6
+}

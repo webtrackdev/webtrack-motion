@@ -4,7 +4,10 @@
 //   node scripts/new-video.mjs <plataforma> <slug> --name PascalCase --title "Titulo corto" \
 //     --badge NUEVO|MEJORA|CORRECCIÓN --icon ico:Jobs|lucide:Truck \
 //     [--ref "reactive#1790"] [--end "Sin sorpresas."] [--highlight sorpresas] \
-//     [--subtitle "Modulo · Pantalla"] [--antes "..."] [--ahora "..."]
+//     [--subtitle "Modulo · Pantalla"] [--antes "..."] [--ahora "..."] [--job]
+// Con --job el video es temporal: va a src/platforms/<plataforma>/jobs/<slug>/ (ignorado por git),
+// trae su propio index.tsx con la composición y NO se registra en Root.tsx. Lo usa el worker de
+// Versio: renderiza desde ahí y borra la carpeta al terminar. still.sh y render.sh la detectan solos.
 // Despues: reemplaza Screen.tsx por la replica real y ajusta los TODO (SKILL.md, paso 4).
 import fs from 'node:fs';
 import path from 'node:path';
@@ -38,7 +41,8 @@ if (!fs.existsSync(platformDir)) {
   console.error(`No existe la plataforma ${platform} en src/platforms (alta con scripts/new-platform.mjs).`);
   process.exit(1);
 }
-const videoDir = path.join(platformDir, 'videos', slug);
+const job = args.includes('--job');
+const videoDir = path.join(platformDir, job ? 'jobs' : 'videos', slug);
 if (fs.existsSync(videoDir)) {
   console.error(`Ya existe ${path.relative(ROOT, videoDir)}; no se sobrescribe.`);
   process.exit(1);
@@ -81,6 +85,28 @@ fs.mkdirSync(videoDir, { recursive: true });
 fs.writeFileSync(path.join(videoDir, `${name}.tsx`), fill(fs.readFileSync(path.join(tplDir, 'Video.tsx.tpl'), 'utf8')));
 fs.writeFileSync(path.join(videoDir, 'Screen.tsx'), fill(fs.readFileSync(path.join(tplDir, 'Screen.tsx.tpl'), 'utf8')));
 fs.writeFileSync(path.join(videoDir, 'guion.md'), fill(fs.readFileSync(path.join(tplDir, 'guion.md.tpl'), 'utf8')));
+
+if (job) {
+  // Composición propia del trabajo: misma marca y formato que Root.tsx, sin tocarlo.
+  fs.writeFileSync(
+    path.join(videoDir, 'index.tsx'),
+    `// Entrada temporal del trabajo ${slug} (worker de Versio). No se registra en Root.tsx.
+import { Composition, registerRoot } from 'remotion';
+import { withBrand } from '../../../../core/platform';
+import { BRAND } from '../../platform';
+import { ${name}, DURATION } from './${name}';
+
+const JobRoot = () => (
+  <Composition id="${slug}" component={withBrand(BRAND, ${name})} durationInFrames={DURATION} fps={30} width={1920} height={1080} />
+);
+
+registerRoot(JobRoot);
+`
+  );
+  console.log(`Listo (temporal): ${path.relative(ROOT, videoDir)}/ (${name}.tsx, Screen.tsx, guion.md, index.tsx). Sin registro en Root.tsx.`);
+  console.log(`Siguiente: ./still.sh ${platform} ${slug} 120   (detecta la carpeta jobs/ sola)`);
+  process.exit(0);
+}
 
 // Registro en Root.tsx: import tras el ultimo import de videos y Composition antes de </>
 const rootFile = path.join(platformDir, 'Root.tsx');

@@ -6,7 +6,9 @@
   "scripts": {
     "studio": "remotion studio",
     "new-platform": "node scripts/new-platform.mjs",
-    "typecheck": "tsc --noEmit -p ."
+    "versio": "node scripts/versio.mjs",
+    "typecheck": "tsc --noEmit -p .",
+    "worker": "node scripts/worker.mjs"
   },
   "dependencies": {
     "@react-three/fiber": "9.8.2",
