@@ -49,14 +49,20 @@ temporales**: `new-video.mjs ... --job` los crea en `src/platforms/<id>/jobs/<sl
 git, con su `index.tsx` y sin registrarse en `Root.tsx`); el worker renderiza, sube y borra la
 carpeta. Dentro de `jobs/`, las piezas de otros videos se importan con `../../videos/<video>/…`.
 Tailwind escanea `jobs/` porque el `style.css` de la plataforma lo registra con `@source`.
+Cada encargo del worker lleva **dos** videos: el clip corto `<slug>` (de él sale el GIF) y el
+**tutorial narrado** `<slug>-tutorial` (el MP4 "Ver video explicativo": voz, música, pasos y resumen).
+El tutorial sigue [tutorial-narrado.md](references/tutorial-narrado.md), con modo-delivery-jobs como modelo.
 
 ## Flujo rápido (un PR o una tarea)
+
+> **Tarea de Versio (WD-####)**: empieza con `pnpm video WD-####` y sigue
+> [tarea-versio.md](references/tarea-versio.md); al final `pnpm publish-video WD-####`.
 
 1. **Entiende el cambio.** `scripts/pr.sh info <N> [repo]` y `diff`; los textos nuevos con
    `scripts/pr.sh i18n <N>`. Si el PR es de otra repo (p. ej. base de datos), muéstralo en la
    pantalla que lo consume (el cuerpo suele nombrar el PR de front). Decide: pantalla propia,
    efecto visible indirecto, o explicativo (avísalo al final).
-2. **Lee la pantalla real** (checkout local en producción, SHA para lo nuevo) y define la
+2. **Lee la pantalla real** (copia de la plataforma en `.cache/platforms/<id>` para lo que ya está en develop —si falta, `pnpm doctor`—; `scripts/pr.sh file` por SHA para lo nuevo) y define la
    historia en 3 pasos: acción > cambio > resultado, más el Antes/Ahora.
 3. **Esqueleto**: `node scripts/new-video.mjs <plataforma> <slug> --name <Pascal> --title
    "<2-3 palabras>" --badge <NUEVO|MEJORA|CORRECCIÓN> --icon ico:<IcoMoon>|lucide:<Nombre>

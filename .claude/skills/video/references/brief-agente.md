@@ -27,11 +27,11 @@ ejemplo y guion, y registra el video en `Root.tsx`. Reemplaza `Screen.tsx` por l
 real y ajusta los TODO.
 
 **Para leer el PR** usa `scripts/pr.sh info|diff|i18n|file <N> [repo]` (archivos del PR por
-SHA). El checkout local de `../reactive` puede no tener lo nuevo.
+SHA). La copia de Reactive (`.cache/platforms/webtrack`, rama develop) puede no tener lo nuevo.
 
 **Reglas inamovibles**
 - Fuentes de solo lectura: nunca escribas, hagas `git fetch`, `checkout` ni `commit` en
-  ../reactive ni en ../reactive-backend. Sin credenciales; datos ficticios.
+  la copia de Reactive (.cache/platforms/webtrack) ni en otro repo. Sin credenciales; datos ficticios.
 - Fidelidad: mismos íconos (IcoIcon con el nombre real; lucide solo si el componente real lo
   usa), estructura, clases Tailwind y textos del i18n que la aplicación real.
 - No toques `src/core`, `FormKit.tsx`, `IcoIcon.tsx`, otros videos ni el skill. Piezas

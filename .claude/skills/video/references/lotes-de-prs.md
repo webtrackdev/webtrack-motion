@@ -39,7 +39,7 @@ la tanda antes de ver nada).
 - `scripts/pr.sh info|diff|i18n|file <N> [repo]` hace todo con `gh`.
 - Los archivos del commit del PR se piden por **SHA** (`headRefOid`), no por nombre de rama:
   las ramas con barras (`feature/fer/...`) dan 404.
-- El checkout local de `../reactive` puede no tener los cambios del PR ni las pantallas
+- La copia de Reactive (`.cache/platforms/webtrack`, rama develop) puede no tener los cambios del PR ni las pantallas
   nuevas. Para lo nuevo, usa el SHA; para lo existente en producción, el checkout.
 - Nunca `git fetch`, `checkout` ni escribir en el repo de la plataforma.
 

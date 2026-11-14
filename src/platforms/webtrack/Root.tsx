@@ -12,6 +12,7 @@ import { UsuariosLicencias, DURATION as USUARIOS_LIC } from './videos/usuarios-l
 import { ContactosRuta, DURATION as CONTACTOS } from './videos/contactos-ruta/ContactosRuta';
 import { JobsSinAsignar, DURATION as JOBS_SIN_ASIGNAR } from './videos/jobs-sin-asignar/JobsSinAsignar';
 import { ReferenciasPublicas, DURATION as REFERENCIAS } from './videos/referencias-publicas/ReferenciasPublicas';
+import { ModoDeliveryJobs, DURATION as MODO_DELIVERY } from './videos/modo-delivery-jobs/ModoDeliveryJobs';
 
 const video = { fps: 30, width: 1920, height: 1080 };
 
@@ -26,6 +27,7 @@ export const RemotionRoot = () => (
     <Composition id="jobs-sin-asignar" component={withBrand(BRAND, JobsSinAsignar)} durationInFrames={JOBS_SIN_ASIGNAR} {...video} />
     <Composition id="referencias-publicas" component={withBrand(BRAND, ReferenciasPublicas)} durationInFrames={REFERENCIAS} {...video} />
     <Composition id="contactos-ruta" component={withBrand(BRAND, ContactosRuta)} durationInFrames={CONTACTOS} {...video} />
+    <Composition id="modo-delivery-jobs" component={withBrand(BRAND, ModoDeliveryJobs)} durationInFrames={MODO_DELIVERY} {...video} />
     <Composition id="usuarios-licencias" component={withBrand(BRAND, UsuariosLicencias)} durationInFrames={USUARIOS_LIC} {...video} />
   </>
 );

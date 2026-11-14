@@ -2,3 +2,5 @@ node_modules/
 out/
 .env
 src/platforms/*/jobs/
+# Copias de los repos de las plataformas (pnpm doctor)
+.cache/

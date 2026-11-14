@@ -1,0 +1,35 @@
+{
+  "_nota": "Audio de los videos de motion. Servicio de voz: provider = deepgram | elevenlabs (o --provider=). Claves en .env (no se versiona): DEEPGRAM_API_KEY / ELEVENLABS_API_KEY.",
+  "provider": "elevenlabs",
+  "deepgram": {
+    "model": "aura-2-javier-es"
+  },
+  "elevenlabs": {
+    "voice_id": "TX3LPaxmHKxFdv7VOQHJ",
+    "model_id": "eleven_multilingual_v2",
+    "output_format": "mp3_44100_128",
+    "language_code": "es",
+    "voice_settings": {
+      "stability": 0.5,
+      "similarity_boost": 0.75,
+      "style": 0,
+      "use_speaker_boost": true
+    }
+  },
+  "music": {
+    "file": "assets/audio/music.mp3",
+    "volume": 0.15,
+    "duck": true,
+    "fadeIn": 1,
+    "fadeOut": 2.5
+  },
+  "narration": {
+    "gap": 0.15,
+    "charsPerSecond": 14.5,
+    "volume": 1
+  },
+  "pricing": {
+    "elevenlabs_per_1k_chars": 0.3,
+    "deepgram_per_1k_chars": 0.045
+  }
+}

@@ -3,7 +3,9 @@
     "name": "Webtrack",
     "source": {
       "type": "repo",
-      "repo": "../reactive",
+      "repo": ".cache/platforms/webtrack",
+      "git": "https://github.com/webtrackdev/reactive.git",
+      "branch": "develop",
       "src": "src"
     }
   },

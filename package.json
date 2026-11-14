@@ -8,7 +8,10 @@
     "new-platform": "node scripts/new-platform.mjs",
     "versio": "node scripts/versio.mjs",
     "typecheck": "tsc --noEmit -p .",
-    "worker": "node scripts/worker.mjs"
+    "worker": "node scripts/worker.mjs",
+    "doctor": "node scripts/doctor.mjs",
+    "video": "node scripts/video.mjs",
+    "publish-video": "node scripts/publish-video.mjs"
   },
   "dependencies": {
     "@react-three/fiber": "9.8.2",

@@ -1,0 +1,198 @@
+{
+ "fps": 30,
+ "phrases": [
+  {
+   "i": 0,
+   "start": 21,
+   "end": 333,
+   "text": "Hoy te explico, paso a paso, el Modo Delivery de la app de Jobs: qué hace, dónde se activa y cómo decidir quién lo usa."
+  },
+  {
+   "i": 1,
+   "start": 344,
+   "end": 649,
+   "text": "Empecemos por lo básico. La app de Jobs es la que usa tu equipo en campo para ver y completar sus trabajos del día."
+  },
+  {
+   "i": 2,
+   "start": 660,
+   "end": 1043,
+   "text": "Cuando el Modo Delivery está activo, la pantalla Hoy de la app cambia de enfoque: se concentra en entregar las órdenes de cada job, y cada entrega se marca con un solo toque."
+  },
+  {
+   "i": 3,
+   "start": 1053,
+   "end": 1332,
+   "text": "Es ideal para quienes reparten pedidos todo el día, porque reduce pasos y deja a la vista lo único que importa: qué falta por entregar."
+  },
+  {
+   "i": 4,
+   "start": 1365,
+   "end": 1573,
+   "text": "El modo se configura en la web, no en el teléfono. Entra a Jobs y abre la Configuración de Jobs."
+  },
+  {
+   "i": 5,
+   "start": 1584,
+   "end": 1883,
+   "text": "En la pestaña General vas a ver dos interruptores. El primero, Permitir solicitudes de reprogramación, controla otra función."
+  },
+  {
+   "i": 6,
+   "start": 1894,
+   "end": 2146,
+   "text": "El segundo es el nuevo: Modo Delivery en la app de Jobs. Debajo, una nota te recuerda que este es el valor de la organización."
+  },
+  {
+   "i": 7,
+   "start": 2157,
+   "end": 2359,
+   "text": "Al encenderlo y guardar, todos los usuarios de la organización trabajan con el Modo Delivery en su app."
+  },
+  {
+   "i": 8,
+   "start": 2370,
+   "end": 2646,
+   "text": "Un detalle: para cambiarlo necesitas permiso de edición. Sin ese permiso, el panel se muestra solo para consulta."
+  },
+  {
+   "i": 9,
+   "start": 2679,
+   "end": 3005,
+   "text": "Ahora, no todo tu equipo hace lo mismo. Imagina que tienes veinte conductores: quince reparten pedidos y cinco hacen visitas de mantenimiento."
+  },
+  {
+   "i": 10,
+   "start": 3015,
+   "end": 3369,
+   "text": "Para eso existen las excepciones. En Jobs, entra a Ajustes de Usuario, selecciona a la persona y abre Gestión de Preferencias. Ahí está la opción Modo Delivery."
+  },
+  {
+   "i": 11,
+   "start": 3379,
+   "end": 3646,
+   "text": "Tiene tres valores. El primero es Igual que la organización: el usuario sigue lo que diga el interruptor general."
+  },
+  {
+   "i": 12,
+   "start": 3657,
+   "end": 3946,
+   "text": "Esa es la opción por defecto, y tiene una ventaja: si mañana cambias el interruptor de la organización, estos usuarios cambian con él, sin tocarlos uno por uno."
+  },
+  {
+   "i": 13,
+   "start": 3957,
+   "end": 4203,
+   "text": "El segundo valor es Activado: ese usuario tendrá el Modo Delivery aunque la organización lo tenga apagado."
+  },
+  {
+   "i": 14,
+   "start": 4213,
+   "end": 4444,
+   "text": "Y el tercero es Desactivado: ese usuario trabajará sin el Modo Delivery, aunque la organización lo tenga encendido."
+  },
+  {
+   "i": 15,
+   "start": 4455,
+   "end": 4711,
+   "text": "En nuestro ejemplo, enciendes el interruptor de la organización y pones en Desactivado a los cinco técnicos de mantenimiento. Listo."
+  },
+  {
+   "i": 16,
+   "start": 4744,
+   "end": 5084,
+   "text": "Si son muchos usuarios, no tienes que ir uno por uno: selecciona a varios en la tabla, abre Gestión de Preferencias y aplica el mismo valor a todos de una vez."
+  },
+  {
+   "i": 17,
+   "start": 5095,
+   "end": 5362,
+   "text": "Y si los usuarios que seleccionaste tienen valores distintos, el aviso Conflictos Detectados te muestra esa diferencia antes de aplicar."
+  },
+  {
+   "i": 18,
+   "start": 5395,
+   "end": 5681,
+   "text": "Para revisar cómo quedó todo, vuelve a la tabla de Ajustes de Usuario. Ahí hay una columna nueva: Modo Delivery."
+  },
+  {
+   "i": 19,
+   "start": 5691,
+   "end": 5989,
+   "text": "Esa columna te muestra el valor de cada persona, así ves de un vistazo quién sigue a la organización y quién tiene su propia excepción."
+  },
+  {
+   "i": 20,
+   "start": 6022,
+   "end": 6367,
+   "text": "En resumen: el interruptor de la organización define la regla general, la Gestión de Preferencias define las excepciones, y la columna de usuarios te deja comprobarlo."
+  },
+  {
+   "i": 21,
+   "start": 6378,
+   "end": 6594,
+   "text": "Así tu equipo de reparto trabaja enfocado en sus entregas, y el resto sigue con la app como siempre."
+  }
+ ],
+ "sections": [
+  {
+   "phrases": [
+    0,
+    1,
+    2,
+    3
+   ],
+   "start": 21,
+   "end": 1332
+  },
+  {
+   "phrases": [
+    4,
+    5,
+    6,
+    7,
+    8
+   ],
+   "start": 1365,
+   "end": 2646
+  },
+  {
+   "phrases": [
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15
+   ],
+   "start": 2679,
+   "end": 4711
+  },
+  {
+   "phrases": [
+    16,
+    17
+   ],
+   "start": 4744,
+   "end": 5362
+  },
+  {
+   "phrases": [
+    18,
+    19
+   ],
+   "start": 5395,
+   "end": 5989
+  },
+  {
+   "phrases": [
+    20,
+    21
+   ],
+   "start": 6022,
+   "end": 6594
+  }
+ ],
+ "duration": 6703
+}

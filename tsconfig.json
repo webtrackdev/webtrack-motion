@@ -15,7 +15,7 @@
     "baseUrl": ".",
     "paths": {
       "@webtrack/*": [
-        "../reactive/src/*"
+        ".cache/platforms/webtrack/src/*"
       ]
     },
     "resolveJsonModule": true

@@ -17,8 +17,9 @@ CUT=()
 if [ -n "$START" ]; then CUT+=(-ss "$START"); OUT="out/$PLATFORM/$ID-${START}s.gif"; fi
 if [ -n "$DUR" ]; then CUT+=(-t "$DUR"); fi
 FILTERS="fps=$FPS,scale=$WIDTH:-1:flags=lanczos"
-PALETTE="$(mktemp -t palette).png"
+PALETTE_DIR="$(mktemp -d)"  # portable: macOS y Linux/WSL
+PALETTE="$PALETTE_DIR/palette.png"
 ffmpeg -v error -y "${CUT[@]}" -i "$SRC" -vf "$FILTERS,palettegen=max_colors=256:stats_mode=diff" "$PALETTE"
 ffmpeg -v error -y "${CUT[@]}" -i "$SRC" -i "$PALETTE" -lavfi "$FILTERS [x]; [x][1:v] paletteuse=dither=sierra2_4a:diff_mode=rectangle" -loop 0 "$OUT"
-rm -f "$PALETTE"
+rm -rf "$PALETTE_DIR"
 echo "$OUT ($(du -h "$OUT" | cut -f1))"
