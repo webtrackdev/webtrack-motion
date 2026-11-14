@@ -14,5 +14,13 @@
     "source": {
       "type": "theme"
     }
+  },
+  "uvgo": {
+    "name": "UVGo",
+    "source": {
+      "type": "repo",
+      "repo": "../../UVG/POO/UVGo",
+      "src": "src"
+    }
   }
 }

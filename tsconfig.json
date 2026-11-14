@@ -16,6 +16,9 @@
     "paths": {
       "@webtrack/*": [
         ".cache/platforms/webtrack/src/*"
+      ],
+      "@uvgo/*": [
+        "../../UVG/POO/UVGo/src/*"
       ]
     },
     "resolveJsonModule": true
