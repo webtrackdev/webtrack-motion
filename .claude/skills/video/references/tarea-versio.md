@@ -1,6 +1,8 @@
 # Video de una tarea de Versio (flujo de cada dev, sin worker)
 
-Cuando alguien dice **"genera el video de WD-4541"** (o "del issue…", "de la tarea…"):
+Cuando alguien dice **"genera el video de WD-4541"** (o "del issue…", "de la tarea…") en una sesión
+interactiva dentro de este repo. (Desde otro repo o sin revisión paso a paso se usa el MCP `webtrack-motion`:
+`generate_video` lo hace todo en segundo plano y entrega las rutas, sin subir.)
 
 1. `pnpm video WD-4541` (agrega `--version <número>` o `--app <slug>` si lo dicen). Trae el issue de
    Versio y muestra el **encargo completo**: datos de la novedad, PRs, qué leer, los dos videos, reglas y

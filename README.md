@@ -18,6 +18,28 @@ Se usa de tres formas:
   de este repo (`pnpm worker`) lo hace solo. Mismo resultado (comparten `scripts/lib/pipeline.mjs`).
 - **A mano, de un PR o un tema:** "haz el video del PR 1790". El flujo está en el skill `video`.
 
+## MCP: pedir el video desde cualquier sesión de Claude
+
+webtrack-motion trae su propio MCP (`scripts/mcp.mjs`). Con él, desde Claude Code en **cualquier** repo
+(por ejemplo, trabajando en Reactive) basta decir *"genera el GIF y el video de WD-4541"*: el MCP lo genera
+en tu máquina, en segundo plano, y al terminar te dice dónde quedaron (`out/videos/WD-4541/`).
+**Por ahora no sube nada a Versio.**
+
+```bash
+# Una vez, para todas tus sesiones (dentro de este repo ya lo trae .mcp.json):
+claude mcp add --scope user webtrack-motion -- node ~/Documents/Webtrack/webtrack-motion/scripts/mcp.mjs
+```
+
+| Herramienta | Qué hace |
+|---|---|
+| `generate_video` | Arranca la generación (unos 15 min). Con solo la tarea busca el issue en Versio (`VERSIO_MCP_TOKEN`); si no, pásale título, texto y PRs. |
+| `video_status` | Fase, %, minutos que lleva y que faltan; al terminar, las rutas del GIF y del MP4. |
+| `cancel_video` | Corta la generación (Claude, render y voz). |
+| `list_videos` | Lo generado o en curso en esta máquina. |
+
+Sigue aunque cierres la sesión de Claude (corre en un proceso aparte, `scripts/generate.mjs`). A mano:
+`pnpm generate WD-4541` (o `--issue archivo.json` sin Versio).
+
 ## Video de una tarea, paso a paso
 
 ```bash

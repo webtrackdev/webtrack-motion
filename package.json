@@ -11,7 +11,9 @@
     "worker": "node scripts/worker.mjs",
     "doctor": "node scripts/doctor.mjs",
     "video": "node scripts/video.mjs",
-    "publish-video": "node scripts/publish-video.mjs"
+    "publish-video": "node scripts/publish-video.mjs",
+    "generate": "node scripts/generate.mjs",
+    "mcp": "node scripts/mcp.mjs"
   },
   "dependencies": {
     "@react-three/fiber": "9.8.2",

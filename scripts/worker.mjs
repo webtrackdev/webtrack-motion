@@ -27,15 +27,17 @@ import { spawn, spawnSync } from 'node:child_process';
 import os from 'node:os';
 import {
   ROOT, baseUrl, MAX_BYTES, PLATFORM, REACTIVE, envValue, framesDone, slugOf, tutorialOf, brief,
-  render, jobDir, useRunner
+  render, jobDir, useRunner, RANGES, LIMIT_RE, claudeFraction, askClaude as askClaudeWith, CLAUDE_ARGS
 } from './lib/pipeline.mjs';
+
+/** Claude cancelable: corre en su propio grupo de procesos (spawnJob) y se corta entero. */
+const askClaude = (prompt, logFile) => askClaudeWith(prompt, logFile, { spawnChild: spawnJob, kill: killTree });
 
 const args = process.argv.slice(2);
 const once = args.includes('--once');
 const dryRun = args.includes('--dry-run');
 const POLL_MS = 10_000;
 const HEARTBEAT_MS = 60_000;
-const CLAUDE_TIMEOUT_MS = 120 * 60 * 1000; // la función considera abandonado un trabajo a las 3 h
 
 
 const secret = envValue('MOTION_WORKER_SECRET');
@@ -116,10 +118,7 @@ useRunner(runAsync);
 
 // ---------- Avance (barra de progreso en Versio) ----------
 // Avance global 0-100 por fases: Claude 0-70, clip 70-78, GIF 78-81, tutorial 81-95, voz 95-97, subida 97-100.
-const RANGES = { claude: [0, 70], 'render-clip': [70, 78], gif: [78, 81], 'render-tutorial': [81, 95], mux: [95, 97], upload: [97, 100] };
 const REPORT_EVERY_MS = 15_000;
-/** Lo que suele tardar Claude en armar el clip y el tutorial: ritmo mínimo de la barra en esa fase. */
-const CLAUDE_TYPICAL_MIN = 10;
 
 /** Reporta a Versio sin saturar: al cambiar de fase o cada 15 s si avanzó. Nunca retrocede. */
 function progressReporter(job) {
@@ -138,63 +137,6 @@ function progressReporter(job) {
 }
 
 
-/**
- * Avance mientras Claude trabaja (no lo dice él): por los archivos que van apareciendo, más un
- * mínimo por tiempo (unos 10 min típicos) que nunca pasa del siguiente hito. Solo cuentan los
- * archivos nuevos: la carpeta de audio puede traer restos de un intento anterior.
- */
-function claudeFraction(slug, started) {
-  const tut = tutorialOf(slug);
-  const fresh = (file) => { try { return fs.statSync(file).mtimeMs >= started; } catch { return false; } };
-  const audio = path.join(ROOT, 'out', PLATFORM, 'audio', tut);
-  const milestones = [
-    [fresh(path.join(jobDir(slug), 'index.tsx')), 12],
-    [fresh(path.join(jobDir(tut), 'index.tsx')), 25],
-    [fresh(path.join(jobDir(tut), 'narracion.md')), 35],
-    [fresh(path.join(audio, 'narration.mp3')), 52],
-    [fresh(path.join(jobDir(tut), 'timeline.json')), 62],
-  ];
-  const reached = Math.max(2, ...milestones.filter(([ok]) => ok).map(([, pct]) => pct));
-  const byTime = ((Date.now() - started) / 60000 / CLAUDE_TYPICAL_MIN) * 70;
-  return Math.min(Math.max(reached, Math.min(byTime, reached + 12)), 68) / 70;
-}
-
-// Claude solo puede editar dentro de webtrack-motion (acceptEdits no aprueba rutas fuera),
-// leer Reactive, y correr los scripts del skill (incluida la voz). Sin git.
-const CLAUDE_ARGS = [
-  '--permission-mode', 'acceptEdits',
-  '--output-format', 'json',
-  '--allowedTools',
-  'Read', 'Glob', 'Grep', 'Edit', 'Write',
-  `Read(/${REACTIVE}/**)`,
-  'Bash(node scripts/new-video.mjs:*)', 'Bash(./still.sh:*)', 'Bash(scripts/pr.sh:*)',
-  'Bash(node scripts/narrate.mjs check:*)', 'Bash(node scripts/narrate.mjs synthesize:*)', 'Bash(node scripts/voice-timeline.mjs:*)',
-  'Bash(ffmpeg:*)', 'Bash(ls:*)', 'Bash(pnpm typecheck)', 'Bash(npx tsc:*)',
-  '--disallowedTools', 'Bash(git:*)', 'Bash(rm:*)', 'Bash(./render.sh:*)', 'Bash(./gif.sh:*)', 'Bash(node scripts/narrate.mjs mux:*)'
-];
-
-function askClaude(prompt, logFile) {
-  const model = envValue('CLAUDE_MODEL');
-  const cmdArgs = ['-p', prompt, ...CLAUDE_ARGS, ...(model ? ['--model', model] : [])];
-  return new Promise((resolve, reject) => {
-    let child;
-    try { child = spawnJob('claude', cmdArgs); } catch (e) { return reject(e); }
-    const out = fs.createWriteStream(logFile);
-    let stdout = '';
-    child.stdout.on('data', (d) => { stdout += d; out.write(d); });
-    child.stderr.on('data', (d) => out.write(d));
-    const timer = setTimeout(() => { killTree(child, 'SIGTERM'); reject(new Error('Claude tardó más de 2 h')); }, CLAUDE_TIMEOUT_MS);
-    child.on('error', (e) => { clearTimeout(timer); reject(new Error(`No se pudo ejecutar claude: ${e.message}`)); });
-    child.on('close', (code) => {
-      clearTimeout(timer);
-      out.end();
-      let result = null;
-      try { result = JSON.parse(stdout); } catch { /* salida no JSON */ }
-      if (code !== 0 || result?.is_error) return reject(new Error(`Claude terminó con error${result?.result ? `: ${String(result.result).slice(0, 300)}` : ` (código ${code})`}`));
-      resolve(result?.result ?? '');
-    });
-  });
-}
 
 // ---------- Render, subida y cierre ----------
 async function upload(job, file, kind) {
@@ -214,7 +156,6 @@ async function upload(job, file, kind) {
 // "You've hit your 5-hour limit · resets 7:50pm (America/Guatemala)": no es culpa del video. Si se
 // marcara fallido, el worker vaciaría la cola en minutos (cada trabajo falla al instante). El
 // trabajo vuelve a la cola y el worker espera a que se restablezca el límite.
-const LIMIT_RE = /hit your .*limit|usage limit|rate limit|limit reached|resets \d/i;
 const DEFAULT_LIMIT_WAIT_MS = 15 * 60 * 1000;
 
 /** Milisegundos hasta la hora de "resets 7:50pm" (hora local del equipo), con 2 min de margen. */

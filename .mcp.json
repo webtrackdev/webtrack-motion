@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "webtrack-motion": {
+      "type": "stdio",
+      "command": "node",
+      "args": [
+        "scripts/mcp.mjs"
+      ]
+    }
+  }
+}
