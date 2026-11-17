@@ -1,7 +1,8 @@
 #!/usr/bin/env node
 // MCP de webtrack-motion (stdio, JSON-RPC 2.0 por líneas, sin dependencias). Desde cualquier sesión de
-// Claude: "genera el GIF y el video de WD-4541". Corre en la máquina del dev y genera ahí mismo; por
-// ahora NO sube nada a Versio: entrega las rutas del GIF y del MP4.
+// Claude: "genera el GIF y el video de WD-4541". Corre en la máquina del dev y genera ahí mismo; al
+// terminar publica el tutorial en el canal de YouTube de Versio (y, si la tarea está en un borrador, deja
+// el GIF y el enlace en la novedad). Entrega también las rutas locales del GIF y del MP4.
 //
 //   generate_video  arranca la generación en segundo plano (unos 15 min) con scripts/generate.mjs
 //   video_status    fase, %, tiempo restante y, al terminar, dónde quedaron el GIF y el MP4
@@ -21,8 +22,11 @@ const PROTOCOLS = ['2025-06-18', '2025-03-26', '2024-11-05'];
 const TYPICAL_MIN = 15;
 const INSTRUCTIONS = `Genera en esta máquina el GIF (vista previa) y el tutorial narrado (MP4) de un issue de Webtrack,
 con Claude Code y Remotion (proyecto webtrack-motion). Tarda unos 15 min: generate_video responde al momento y
-video_status da el avance. Por ahora no sube nada a Versio: al terminar entrega las rutas de los archivos.
-Si no hay VERSIO_MCP_TOKEN en el .env de webtrack-motion, pide al usuario título y texto del issue (y sus PRs).`;
+video_status da el avance. Al terminar publica el tutorial en el canal de YouTube de Versio y, si la tarea está en
+un borrador de Versio, pone el GIF y el enlace de YouTube en la novedad (publish=false para solo generar en local).
+Basta la tarea (WD-####): se busca en Versio y, si no está en ninguna versión, en Avanza (en ese caso se publica
+en YouTube pero no queda en ninguna novedad). Si no hay VERSIO_MCP_TOKEN en el .env de webtrack-motion, pide al
+usuario título y texto del issue (y sus PRs).`;
 
 const PHASES = {
   preparing: 'Preparando',
@@ -31,6 +35,7 @@ const PHASES = {
   gif: 'Armando el GIF',
   'render-tutorial': 'Renderizando el tutorial narrado',
   mux: 'Mezclando voz y música',
+  upload: 'Publicando en YouTube',
 };
 
 const issueProp = { type: 'string', description: 'Tarea de Avanza del issue (p. ej. "WD-4541").' };
@@ -38,7 +43,7 @@ const TOOLS = [
   {
     name: 'generate_video',
     title: 'Generar GIF y video de un issue',
-    description: 'Arranca en segundo plano la generación del GIF (clip corto) y del tutorial narrado (MP4 con voz y música) de un issue, en esta máquina. Tarda unos 15 min; consulta con video_status. Con solo la tarea, los datos se buscan en Versio (requiere VERSIO_MCP_TOKEN); si no, pasa título, texto y PRs. No sube nada a Versio. Si ya se está generando, no lo repite.',
+    description: 'Arranca en segundo plano la generación del GIF (clip corto) y del tutorial narrado (MP4 con voz y música) de un issue, en esta máquina, y al terminar publica el tutorial en el canal de YouTube de Versio (si la tarea está en un borrador, también pone el GIF y el enlace en la novedad). Tarda unos 15 min; consulta con video_status. Con solo la tarea, los datos se buscan en Versio y, si no está en ninguna versión, en Avanza (requiere VERSIO_MCP_TOKEN); los PRs se completan buscando la tarea en GitHub. Sin token, pasa título, texto y PRs. Si ya se está generando, no lo repite.',
     inputSchema: {
       type: 'object',
       properties: {
@@ -50,6 +55,7 @@ const TOOLS = [
         prs: { type: 'array', items: { type: 'string' }, description: 'PRs del issue: "reactive#1790" o su URL de GitHub. De ahí Claude lee qué cambió.' },
         app: { type: 'string', description: 'App de Versio donde buscar (p. ej. "reactive").' },
         version: { type: 'string', description: 'Versión de Versio donde buscar, si la tarea está en varias.' },
+        publish: { type: 'boolean', description: 'Publicar en YouTube al terminar (por defecto true). false = solo generar en local.' },
       },
       required: ['issue'],
     },
@@ -58,7 +64,7 @@ const TOOLS = [
   {
     name: 'video_status',
     title: 'Avance de un video',
-    description: 'Estado de la generación de un issue: fase, porcentaje, minutos que lleva y que faltan; al terminar, las rutas del GIF y del MP4 (con su peso) y el resumen de Claude; si falló, el error y el registro.',
+    description: 'Estado de la generación de un issue: fase, porcentaje, minutos que lleva y que faltan; al terminar, el enlace de YouTube (y si quedó en la novedad), las rutas locales del GIF y del MP4 y el resumen de Claude; si falló, el error y el registro.',
     inputSchema: { type: 'object', properties: { issue: issueProp }, required: ['issue'] },
     annotations: { readOnlyHint: true },
   },
@@ -100,7 +106,15 @@ function view(s) {
     };
   }
   if (s.state === 'done') {
-    return { ...base, files: s.files, tutorial: s.tutorial, took_min: Math.round((Date.parse(s.finished_at) - Date.parse(s.started_at)) / 60000), summary: s.summary ?? null };
+    return {
+      ...base,
+      youtube: s.publish?.youtube ?? null,
+      in_versio: s.publish?.attached ?? false,
+      publish_note: s.publish?.error ?? s.publish?.skipped ?? s.publish?.note ?? null,
+      files: s.files, tutorial: s.tutorial,
+      took_min: Math.round((Date.parse(s.finished_at) - Date.parse(s.started_at)) / 60000),
+      summary: s.summary ?? null,
+    };
   }
   return { ...base, error: s.error ?? null, log: s.log ?? null, kept: s.kept ?? [] };
 }
@@ -136,6 +150,8 @@ function generateVideo(a) {
     if (a.app) runArgs.push('--app', a.app);
     if (a.version) runArgs.push('--version', a.version);
   }
+  if (a.title && a.app) runArgs.push('--app', a.app);
+  if (a.publish === false) runArgs.push('--no-publish');
 
   // Proceso aparte y en su propio grupo: sigue aunque se cierre esta sesión, y cancel_video lo corta entero.
   const out = fs.openSync(path.join(ROOT, 'out', 'tasks', `${slug}.runner.log`), 'w');
@@ -145,7 +161,7 @@ function generateVideo(a) {
     started: true,
     issue: ticket,
     pid: child.pid,
-    message: `Generando el GIF y el tutorial narrado de ${ticket} en esta máquina. Tarda unos ${TYPICAL_MIN} min: consulta con video_status. No se sube nada a Versio.`,
+    message: `Generando el GIF y el tutorial narrado de ${ticket} en esta máquina. Tarda unos ${TYPICAL_MIN} min: consulta con video_status. ${a.publish === false ? 'Solo en local (sin publicar).' : 'Al terminar se publica en YouTube.'}`,
   };
 }
 

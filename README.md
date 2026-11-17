@@ -22,8 +22,9 @@ Se usa de tres formas:
 
 webtrack-motion trae su propio MCP (`scripts/mcp.mjs`). Con él, desde Claude Code en **cualquier** repo
 (por ejemplo, trabajando en Reactive) basta decir *"genera el GIF y el video de WD-4541"*: el MCP lo genera
-en tu máquina, en segundo plano, y al terminar te dice dónde quedaron (`out/videos/WD-4541/`).
-**Por ahora no sube nada a Versio.**
+en tu máquina, en segundo plano, y al terminar **publica el tutorial en el canal de YouTube de Versio**. Si la
+tarea está en un borrador de Versio, la novedad queda con el GIF de vista previa y el enlace de YouTube. Copia
+local en `out/videos/WD-4541/`. Con `publish: false` (o `pnpm generate WD-4541 --no-publish`) solo genera.
 
 ```bash
 # Una vez, para todas tus sesiones (dentro de este repo ya lo trae .mcp.json):
@@ -32,8 +33,8 @@ claude mcp add --scope user webtrack-motion -- node ~/Documents/Webtrack/webtrac
 
 | Herramienta | Qué hace |
 |---|---|
-| `generate_video` | Arranca la generación (unos 15 min). Con solo la tarea busca el issue en Versio (`VERSIO_MCP_TOKEN`); si no, pásale título, texto y PRs. |
-| `video_status` | Fase, %, minutos que lleva y que faltan; al terminar, las rutas del GIF y del MP4. |
+| `generate_video` | Arranca la generación (unos 15 min) y al final publica en YouTube. Con solo la tarea busca el issue en Versio (`VERSIO_MCP_TOKEN`); si no, pásale título, texto y PRs. |
+| `video_status` | Fase, %, minutos que lleva y que faltan; al terminar, el enlace de YouTube, si quedó en la novedad y las rutas locales. |
 | `cancel_video` | Corta la generación (Claude, render y voz). |
 | `list_videos` | Lo generado o en curso en esta máquina. |
 
@@ -49,8 +50,9 @@ claude                              # dentro de webtrack-motion
 
 Por dentro:
 
-1. `pnpm video WD-4541` busca la tarea en Versio (el borrador más reciente; `--version` para otra) y muestra
-   el encargo: título, texto, módulo, PRs, qué leer y las reglas.
+1. `pnpm video WD-4541` busca la tarea en Versio (el borrador más reciente; `--version` para otra) o, si no está
+   en ninguna versión, en Avanza; completa sus PRs buscando la tarea en GitHub y muestra el encargo: título,
+   texto, módulo, PRs, qué leer y las reglas.
 2. Claude lee los PRs (`scripts/pr.sh`) y la pantalla real en la copia de Reactive, y arma dos videos en
    `src/platforms/webtrack/jobs/`: el clip corto (→ GIF) y el tutorial narrado con voz (→ MP4).
 3. Te muestra stills para que des el visto bueno.

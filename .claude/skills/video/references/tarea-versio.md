@@ -17,6 +17,14 @@ interactiva dentro de este repo. (Desde otro repo o sin revisión paso a paso se
    novedad. `--no-upload` solo renderiza (para revisar el MP4); `--keep` conserva las carpetas para ajustar.
 5. Reporta: duración de cada video, caracteres del guion, URLs del GIF y del video, y qué se dedujo.
 
+## De dónde salen los datos
+
+- **Versio** (lo normal): la novedad del borrador más reciente donde está la tarea.
+- **Avanza**, si la tarea no está en ninguna versión: título, "Para el usuario", módulo, ícono e imágenes de su
+  nota. Se genera y se publica en YouTube, pero no queda en ninguna novedad hasta importarla a un borrador.
+- **PRs**: los de Versio más los que nombran la tarea en GitHub (`gh search prs WD-#### --owner webtrackdev`;
+  las ramas llevan la clave), hasta 8. Si vino de Avanza, son los únicos.
+
 ## Lo que ya se aprendió (no repetir errores)
 
 - **Tiempo real**: unos 15 min por tarea (Claude ~10 min, render del tutorial ~3 min, el resto 1-2 min).

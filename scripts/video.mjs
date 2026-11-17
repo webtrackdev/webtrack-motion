@@ -10,7 +10,7 @@
 // Necesita VERSIO_MCP_TOKEN en .env (Versio › MCP (Claude) › Nuevo token).
 import fs from 'node:fs';
 import path from 'node:path';
-import { ROOT, brief, jobDir, jobFromIssue, slugOf, tutorialOf } from './lib/pipeline.mjs';
+import { ROOT, brief, jobDir, jobFromIssue, slugOf, tutorialOf, withTicketPrs } from './lib/pipeline.mjs';
 import { versioTool } from './lib/versio.mjs';
 
 const args = process.argv.slice(2);
@@ -23,9 +23,9 @@ if (!ticket) {
 
 try {
   const found = await versioTool('find_issue', { issue: ticket, ...(opt('app') ? { app: opt('app') } : {}), ...(opt('version') ? { version: opt('version') } : {}) });
-  const job = jobFromIssue(found.issue);
+  const job = jobFromIssue(withTicketPrs({ ...found.issue, ticket: found.issue.ticket ?? ticket }));
   const slug = slugOf(job);
-  const task = { app: found.app, version: found.version, version_status: found.version_status, ticket: found.issue.ticket ?? ticket, slug, issue: found.issue, fetched_at: new Date().toISOString() };
+  const task = { app: found.app, version: found.version, version_status: found.version_status, source: found.source ?? 'versio', ticket: found.issue.ticket ?? ticket, slug, issue: job.payload, fetched_at: new Date().toISOString() };
   const taskDir = path.join(ROOT, 'out', 'tasks');
   fs.mkdirSync(taskDir, { recursive: true });
   fs.writeFileSync(path.join(taskDir, `${slug}.json`), JSON.stringify(task, null, 2));
@@ -34,8 +34,9 @@ try {
   if (args.includes('--fresh')) dirs.forEach((d) => fs.rmSync(d, { recursive: true, force: true }));
   const existing = dirs.filter((d) => fs.existsSync(d)).map((d) => path.relative(ROOT, d));
 
-  console.log(`# ${task.ticket} · ${found.app} ${found.version} (${found.version_status})`);
-  if (!found.editable) console.log(`\n> ⚠ La versión ${found.version} no es borrador: el video se puede generar, pero publish-video no podrá ponerlo en la novedad hasta que la pasen a borrador (o indica --version de un borrador).`);
+  console.log(found.version ? `# ${task.ticket} · ${found.app} ${found.version} (${found.version_status})` : `# ${task.ticket} · desde Avanza (no está en ninguna versión de Versio)`);
+  if (!found.version) console.log(`\n> ${found.note ?? 'Datos de Avanza.'}`);
+  else if (!found.editable) console.log(`\n> ⚠ La versión ${found.version} no es borrador: el video se puede generar, pero publish-video no podrá ponerlo en la novedad hasta que la pasen a borrador (o indica --version de un borrador).`);
   if (found.also_in?.length) console.log(`\n> También está en: ${found.also_in.join(', ')}. Se usa ${found.version}; cambia con --version.`);
   if (found.media?.gif || found.media?.video) console.log('\n> La novedad ya tiene GIF o video generado: al publicar se reemplaza.');
   if (existing.length) console.log(`\n> Ya hay trabajo de antes en ${existing.join(' y ')}: continúa sobre eso o empieza de cero con --fresh.`);

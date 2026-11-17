@@ -243,3 +243,33 @@ export function askClaude(prompt, logFile, { spawnChild = spawnPlain, kill = (c,
     });
   });
 }
+
+// ---------- PRs de una tarea ----------
+const PR_ORG = process.env.PR_ORG || 'webtrackdev';
+const MAX_PRS = 8;
+
+/**
+ * PRs de GitHub que nombran la tarea (las ramas llevan la clave: feature/WD-4539-…), con `gh` (solo lectura).
+ * Completan los que trae Versio, o son los únicos cuando la tarea viene de Avanza. Sin `gh` o sin red: [].
+ */
+export function findPrsByTicket(ticket) {
+  if (!ticket) return [];
+  const r = spawnSync('gh', ['search', 'prs', ticket, '--owner', PR_ORG, '--json', 'repository,number,url,title,state', '--limit', '20'], { encoding: 'utf8', timeout: 30_000 });
+  if (r.status !== 0) return [];
+  let list;
+  try { list = JSON.parse(r.stdout); } catch { return []; }
+  const key = ticket.toUpperCase();
+  return list
+    .map((pr) => ({ repo: pr.repository?.name, number: pr.number, url: pr.url, named: String(pr.title).toUpperCase().includes(key), state: pr.state }))
+    .filter((pr) => pr.repo && pr.number)
+    // Primero los que llevan la tarea en el título (la rama) y los no cerrados sin merge.
+    .sort((a, b) => Number(b.named) - Number(a.named) || Number(a.state === 'closed') - Number(b.state === 'closed') || b.number - a.number)
+    .map(({ repo, number, url }) => ({ repo, number, url }));
+}
+
+/** Los PRs del issue más los encontrados en GitHub, sin repetir y con tope. */
+export function withTicketPrs(issue) {
+  const seen = new Set((issue.prs ?? []).map((pr) => `${pr.repo}#${pr.number}`));
+  const extra = findPrsByTicket(issue.ticket).filter((pr) => !seen.has(`${pr.repo}#${pr.number}`));
+  return { ...issue, prs: [...(issue.prs ?? []), ...extra].slice(0, MAX_PRS) };
+}
