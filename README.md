@@ -73,7 +73,7 @@ brew install node pnpm ffmpeg gh
 npm install -g @anthropic-ai/claude-code
 
 # 2. Clonar (solo este repo)
-git clone https://github.com/nerywebtrack/webtrack-motion.git
+git clone https://github.com/webtrackdev/webtrack-motion.git
 cd webtrack-motion
 pnpm install
 
@@ -110,7 +110,7 @@ sudo npm install -g pnpm @anthropic-ai/claude-code
 
 # 3. Clonar, dentro de Linux (no en /mnt/c: es mucho más lento)
 mkdir -p ~/Webtrack && cd ~/Webtrack
-git clone https://github.com/nerywebtrack/webtrack-motion.git
+git clone https://github.com/webtrackdev/webtrack-motion.git
 cd webtrack-motion
 pnpm install
 npx playwright install --with-deps chromium-headless-shell   # navegador con sus librerías del sistema
